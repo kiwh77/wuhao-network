@@ -1,0 +1,42 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "outDir": "./",
+    "sourceMap": true,
+    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "declaration": true,
+    "declarationDir": "./types/",
+    "declarationMap": false,
+    "moduleResolution": "node",
+    "module": "esnext",
+    "target": "es5",
+    "baseUrl": "./",
+    "types": [],
+    "typeRoots": [
+      "./node_modules/@types"
+    ],
+    "lib": [
+      "DOM",
+      "ES2015"
+    ],
+    "allowJs": true,
+    "paths": {
+      "tslib": [
+        "./node_modules/tslib/tslib.d.ts"
+      ]
+    },
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/libs/utils/md5.js",
+    "src/libs/utils/clone.js",
+  ],
+  "exclude": [
+    "node_modules",
+    "example",
+    "*.test.ts"
+  ]
+}
