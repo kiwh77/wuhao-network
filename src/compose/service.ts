@@ -1,6 +1,8 @@
+import { RequestParams } from './../context'
 import { PipeAxiosInit, Stack } from '../context'
 import { isArray, isObject } from '../utils/type'
 import { iMiddleware } from './middleware'
+import 'reflect-metadata'
 
 export type PropType<TObj, TProp extends keyof TObj> = TObj[TProp]
 
@@ -59,11 +61,13 @@ export interface iService extends iServiceBase {
   /**
    * 默认参数
    */
-  defaultParams?: object
+  default?: Pick<RequestParams, 'path'> &
+    Pick<RequestParams, 'params'> &
+    Pick<RequestParams, 'body'>
   /**
    * 特性
    */
-  middleware?: Array<iMiddleware>
+  middleware?: Array<iMiddleware | string>
 }
 
 /**
@@ -87,7 +91,7 @@ export class ServiceStack implements Stack<iService> {
     if (props && props.services && props.services.length) {
       this.sources = props.services.reduce(
         (total: Array<iService>, item: iService | iArrayService) => {
-          const service = this.transform(item)
+          const service = transformService(item)
           if (service) total.push(service)
           return total
         },
@@ -97,29 +101,29 @@ export class ServiceStack implements Stack<iService> {
   }
 
   register(service: iService | iArrayService) {
-    const s = this.transform(service)
+    const s = transformService(service)
     if (s) this.sources.push(s)
-  }
-
-  transform(params: iService | iArrayService): iService {
-    let service: iService
-    if (isService(params)) service = params as iService
-
-    if (isArray(params)) {
-      const [name, method, url, advance] = params as iArrayService
-      if (!name || !method || !url) return
-
-      service = {
-        name,
-        method,
-        url,
-        ...(isObject(advance) ? advance : {})
-      }
-    }
-    return service
   }
 
   find(name: string) {
     return this.sources.find(item => item.name === name)
   }
+}
+
+export function transformService(params: iService | iArrayService): iService {
+  let service: iService
+  if (isService(params)) service = params as iService
+
+  if (isArray(params)) {
+    const [name, method, url, advance] = params as iArrayService
+    if (!name || !method || !url) return
+
+    service = {
+      name,
+      method,
+      url,
+      ...(isObject(advance) ? advance : {})
+    }
+  }
+  return service
 }

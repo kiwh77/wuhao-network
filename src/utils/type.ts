@@ -18,3 +18,7 @@ export function isString(obj: any): Boolean {
 export function isNumber(obj: any): Boolean {
   return obj && getType(obj) === 'Number'
 }
+
+export function isFunction(obj: any): Boolean {
+  return obj && getType(obj) === 'Function'
+}

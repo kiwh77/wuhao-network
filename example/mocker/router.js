@@ -11,11 +11,19 @@ const routes = Utils.valuesOfPath(mockRootPath)
  */
 Object.keys(routes).forEach(key => {
   if (typeof key !== 'string') return
-  const methods = key.match(/\[get\]|\[GET\]|\[post\]|\[POST\]|\[put\]|\[PUT\]|\[delete\]|\[DELETE\]/g)
+  const methods = key.match(
+    /\[get\]|\[GET\]|\[post\]|\[POST\]|\[put\]|\[PUT\]|\[delete\]|\[DELETE\]/g
+  )
   if (!methods || methods.length === 0) return
   const method = methods.join('')
-  const routeKey = key.replace(method, '').replace(/\ +/g, '').replace(/[\r\n]/g, '')
-  const routeMethod = method.replace('[', '').replace(']', '').toLocaleLowerCase()
+  const routeKey = key
+    .replace(method, '')
+    .replace(/\ +/g, '')
+    .replace(/[\r\n]/g, '')
+  const routeMethod = method
+    .replace('[', '')
+    .replace(']', '')
+    .toLocaleLowerCase()
   console.log(`${routeMethod} ${routeKey} 添加成功`)
   router[routeMethod] && router[routeMethod](routeKey, routes[key])
 })

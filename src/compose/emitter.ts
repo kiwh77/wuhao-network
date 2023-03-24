@@ -1,14 +1,3 @@
-export enum NetworkLifeEvent {
-  /** 处理请求成功，此时还未发起请求 */
-  RequestFulfilled = 'RequestFulfilled',
-  /** 拒绝请求，配置或参数不符合要求 */
-  RequestRejected = 'RequestRejected',
-  /** 请求成功，已返回响应数据 */
-  ResponseFulfilled = 'ResponseFulfilled',
-  /** 请求失败 */
-  ResponseRejected = 'ResponseRejected'
-}
-
 /**
  * 请求事件处理器
  */

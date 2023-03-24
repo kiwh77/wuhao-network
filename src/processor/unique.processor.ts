@@ -1,4 +1,4 @@
-import { Context, Env } from 'src/context'
+import { Context, Env } from '../context'
 import { BaseProcessor, iProcessor } from './interface'
 
 interface UniqueInit {
@@ -15,7 +15,7 @@ export class UniqueError extends Error {
 export class UniqueProcessor extends BaseProcessor implements iProcessor {
   name = 'unique'
 
-  interval = 1000
+  interval = 0
 
   constructor(props: UniqueInit) {
     super()
@@ -23,9 +23,7 @@ export class UniqueProcessor extends BaseProcessor implements iProcessor {
   }
 
   async handle(ctx: Context, env: Env) {
-    super.handle(ctx, env)
-
-    if (env.bucket.verify(ctx.params, this.interval)) return
+    if (env.bucket.verify(ctx.id, this.interval)) return
     return new UniqueError(ctx.service.name || ctx.service.url)
   }
 }

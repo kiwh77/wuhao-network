@@ -1,12 +1,20 @@
+import 'reflect-metadata'
+import {
+  iArrayService,
+  iService,
+  ServiceStack,
+  transformService
+} from './compose/service'
 import { ProcessorStack } from './compose/processor'
-import { iService, iArrayService, ServiceStack } from './compose/service'
-import { MiddlewareStack } from './compose/middleware'
+import { iMiddleware, MiddlewareStack } from './compose/middleware'
 import { Bucket } from './compose/bucket'
 import { Emitter } from './compose/emitter'
 import { Pipeline } from './compose/pipeline'
 import { Context, ContextInit, PipeAxiosInit, RequestParams } from './context'
 
 export class PipeAxios {
+  static simpleInstance: PipeAxios
+
   pipe: Pipeline = new Pipeline()
   bucket: Bucket = new Bucket()
   emitter: Emitter = new Emitter()
@@ -83,30 +91,103 @@ export class PipeAxios {
   }
 
   install(app: any) {
-    console.log('🚀 - file: index.ts:86 - install - app:', app)
-
-    app.config.globalProperties.$http = this
+    if (app.config && app.config.globalProperties) {
+      app.config.globalProperties.$http = this
+    } else if (app.constructor) {
+      app.prototype.$http = this
+    }
   }
 }
 
+const SERVICE_FLAG = Symbol('service')
+const MIDDLEWARE_FLAG = Symbol('middleware')
+
+/**
+ * 初始化
+ * @param props 初始化参数
+ * @returns
+ * @example
+ *  app.use(createPipeAxios())
+ */
 export function createPipeAxios(props?: PipeAxiosInit) {
-  return new PipeAxios(props)
+  if (!PipeAxios.simpleInstance) {
+    const reflectServices =
+      Reflect.getMetadata(SERVICE_FLAG, ServiceStack) || []
+    const reflectMiddlewares =
+      Reflect.getMetadata(MIDDLEWARE_FLAG, MiddlewareStack) || []
+    const { services = [], middlewares = [], ...remain } = props
+    PipeAxios.simpleInstance = new PipeAxios({
+      ...remain,
+      services: [...services, ...reflectServices],
+      middlewares: [...middlewares, ...reflectMiddlewares]
+    })
+  }
+  return PipeAxios.simpleInstance
 }
 
-let instance: PipeAxios
-export function usePipe() {
-  if (!instance) instance = new PipeAxios()
-  return instance
-}
+/**
+ * 定义服务接口，返回调用函数
+ * @param serviceDefine: iService | iArrayService
+ * @returns request(params: RequestParams)
+ */
+export function useService(serviceDefine: iService | iArrayService) {
+  const service: iService = transformService(serviceDefine)
+  if (!service) return
+  if (PipeAxios.simpleInstance) {
+    PipeAxios.simpleInstance.service.register(service)
+  } else {
+    const services = Reflect.getMetadata(SERVICE_FLAG, ServiceStack) || []
 
-export function useService(service: iService | iArrayService) {
-  const existInstance = usePipe()
-  existInstance.service.register(service)
-  return function (options: RequestParams) {
-    return existInstance.send(options)
+    if (
+      services.length === 0 ||
+      services.some((item: iService) => item.name !== service.name)
+    ) {
+      services.push(service)
+    }
+    Reflect.defineMetadata(SERVICE_FLAG, services, ServiceStack)
+  }
+
+  return function (params: RequestParams) {
+    return PipeAxios.simpleInstance.send({
+      ...service,
+      ...params
+    })
   }
 }
 
-export function useRequest(options: RequestParams) {
-  return usePipe().send(options)
+/**
+ * 注册中间件
+ * @param middleware 中间件参数
+ * @returns 中间件名称
+ */
+export function useMiddleware(middleware: iMiddleware) {
+  if (!middleware) return
+  if (!PipeAxios.simpleInstance) {
+    const mids: iMiddleware[] =
+      Reflect.getMetadata(MIDDLEWARE_FLAG, MiddlewareStack) || []
+    if (mids.some(mid => mid.name === middleware.name)) {
+      throw new Error(`middleware [${middleware.name}] duplicate definition!`)
+    }
+    mids.push(middleware)
+    Reflect.defineMetadata(MIDDLEWARE_FLAG, mids, MiddlewareStack)
+    return middleware.name
+  }
+  return PipeAxios.simpleInstance.middleware.register(middleware)
+}
+
+/**
+ * 发起请求
+ * @param name 服务配置中的名称
+ * @param params 请求参数
+ * @returns
+ */
+export function useFetch(name: string, params?: RequestParams) {
+  if (!PipeAxios.simpleInstance) return
+  const service = PipeAxios.simpleInstance.service.sources.find(
+    item => item.name === name
+  )
+  return PipeAxios.simpleInstance.send({
+    ...service,
+    ...params
+  })
 }

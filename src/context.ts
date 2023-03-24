@@ -51,10 +51,8 @@ export type RequestOptions = {
  * 初始化请求类参数
  */
 export interface PipeAxiosInit {
-  /** 是否允许重复请求 */
-  unique?: Boolean
-  /** 重复请求间隔 */
-  uniqueInterval?: number
+  /** 重复请求间隔，默认为0，表示不限制 */
+  interval?: number
   /** 请求配置 */
   requesterConfig?: RequestConfig
   /** 服务配置列表 */
@@ -91,8 +89,8 @@ export class Context {
   step: string
   initParams: ContextInit
   params: RequestOptions
-  config: AxiosRequestConfig
   service: iService
+  config?: AxiosRequestConfig
   response?: AxiosResponse
   cancel?: Function
 

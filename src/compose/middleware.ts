@@ -1,3 +1,4 @@
+import { isFunction } from '../utils/type'
 import { PipeAxiosInit, Stack, iHandler } from '../context'
 
 export interface iMiddleware extends iHandler {
@@ -6,7 +7,7 @@ export interface iMiddleware extends iHandler {
 
 export class BaseMiddleware implements iMiddleware {
   at: string
-  name = 'baseMiddleware'
+  name = 'base'
   handle() {}
 }
 
@@ -14,16 +15,23 @@ export class MiddlewareStack implements Stack<iMiddleware> {
   sources: iMiddleware[] = []
 
   constructor(props: PipeAxiosInit) {
-    if (props && props.middlewares && props.middlewares.length > 0) {
+    if (props?.middlewares?.length > 0) {
       this.sources = props.middlewares.filter(this.verify)
     }
   }
 
   register<T extends iMiddleware>(middleware: T) {
-    if (this.verify(middleware)) this.sources.push(middleware)
+    if (this.verify(middleware)) {
+      this.sources.push(middleware)
+      return middleware.name
+    }
   }
 
   verify(mid: iMiddleware) {
-    return mid && mid instanceof BaseMiddleware
+    return mid?.at && mid?.name && mid?.handle && isFunction(mid.handle)
+  }
+
+  find(name: string) {
+    return this.sources.find(mid => mid.name === name)
   }
 }

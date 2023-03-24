@@ -30,7 +30,7 @@ const pipe = new PipeAxios({
 // 注册服务处理中间件
 pipe.middleware.register({
   name: 'isArrayBody',
-  type: 'before',
+  at: 'beforeRequest',
   handle(ctx, env) {
     console.log('custom middleware isArrayBody')
   }

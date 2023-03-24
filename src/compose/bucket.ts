@@ -3,31 +3,32 @@ import { RequestOptions } from '../context'
 
 export class Bucket {
   requests: {
-    [key: string]: (RequestOptions & { timestamp: number }) | undefined
+    [key: string]: { timestamp: number }
   } = {}
 
-  verify(service: RequestOptions, interval: number) {
+  getId(service: RequestOptions) {
     const { url, method, params, path, body } = service
-    const id = this._getId({
+    return this._getId({
       url,
       method,
       params,
       path,
       body
     })
+  }
 
+  verify(id: string, interval: number) {
     const request = this.requests[id]
-    if (request?.timestamp + interval < Date.now()) return false
+    if (request?.timestamp + interval > Date.now()) return false
 
     this.requests[id] = {
-      ...service,
       timestamp: Date.now()
     }
-    return true
+    return id
   }
 
   pop(id: string) {
-    this.requests[id] = undefined
+    delete this.requests[id]
   }
 
   private _getId(params: { [key: string]: any }) {
