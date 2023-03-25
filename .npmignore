@@ -1,4 +1,5 @@
 example
+coverage
 src
 node_modules
 jest.config.js

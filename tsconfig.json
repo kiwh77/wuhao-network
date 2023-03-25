@@ -14,7 +14,9 @@
     "module": "esnext",
     "target": "es5",
     "baseUrl": "./",
-    "types": [],
+    "types": [
+      "jest"
+    ],
     "experimentalDecorators": true,
     "typeRoots": [
       "./node_modules/@types"
@@ -32,12 +34,13 @@
   },
   "include": [
     "src/**/*.ts",
+    "@types/jest",
     "src/libs/utils/md5.js",
     "src/libs/utils/clone.js",
   ],
   "exclude": [
     "node_modules",
     "example",
-    "*.test.ts"
+    "src/**/*.test.ts"
   ]
 }

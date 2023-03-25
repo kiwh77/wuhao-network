@@ -2,7 +2,12 @@ import { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { Pipeline } from './compose/pipeline'
 import { iMiddleware, MiddlewareStack } from './compose/middleware'
 import { ProcessorStack } from './compose/processor'
-import { ServiceStack, iService, iArrayService } from './compose/service'
+import {
+  ServiceStack,
+  iService,
+  iArrayService,
+  PropType
+} from './compose/service'
 import { Bucket } from './compose/bucket'
 import { Emitter } from './compose/emitter'
 
@@ -15,14 +20,6 @@ export interface RequestConfig extends AxiosRequestConfig {}
  * 请求参数
  */
 export type RequestParams = {
-  /**
-   * 本次请求发起id，唯一id
-   */
-  id?: string
-  /**
-   * 应用插件
-   */
-  feature?: string | [string]
   /**
    * url后query参数
    * 例：[GET]/api/user/list?pageNo=1&pageSize=10，参数传递应是{ params: { pageNo: 1, pageSize: 10 } }
@@ -41,7 +38,11 @@ export type RequestParams = {
    * 取消函数
    */
   cancel?: Function
-} & Pick<iService, 'middleware' | 'url' | 'method'>
+
+  middleware?: PropType<iService, 'middleware'>
+  url?: PropType<iService, 'url'>
+  method?: PropType<iService, 'method'>
+}
 
 export type RequestOptions = {
   config?: RequestConfig

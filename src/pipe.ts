@@ -54,35 +54,35 @@ export class PipeAxios {
    * @param url
    * @param options
    */
-  get(url: string, options: RequestParams) {
+  get(url: string, options?: RequestParams) {
     return this.send({
       ...options,
       method: 'get',
       url
     })
   }
-  post(url: string, options: RequestParams) {
+  post(url: string, options?: RequestParams) {
     return this.send({
       ...options,
       method: 'post',
       url
     })
   }
-  put(url: string, options: RequestParams) {
+  put(url: string, options?: RequestParams) {
     return this.send({
       ...options,
       method: 'put',
       url
     })
   }
-  delete(url: string, options: RequestParams) {
+  delete(url: string, options?: RequestParams) {
     return this.send({
       ...options,
       method: 'delete',
       url
     })
   }
-  patch(url: string, options: RequestParams) {
+  patch(url: string, options?: RequestParams) {
     return this.send({
       ...options,
       method: 'patch',
