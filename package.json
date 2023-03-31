@@ -1,7 +1,7 @@
 {
   "name": "wuhao-network",
   "version": "1.0.0",
-  "description": "流程齐全、可高度定制的网络请求库，旨在提供网络请求良好体验",
+  "description": "Pipeline-initiated request, Service for orderly management",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
   "types": "dist/types/index.d.ts",
