@@ -1,8 +1,8 @@
-import { PipeAxios } from './pipe'
+import { WuhaoNetwork } from './pipe'
 describe('Pipe.ts', () => {
-  let instance: PipeAxios
+  let instance: WuhaoNetwork
   beforeAll(() => {
-    instance = new PipeAxios()
+    instance = new WuhaoNetwork()
   })
   it('Has Created', () => {
     expect(instance).toBeDefined()

@@ -10,20 +10,25 @@ import { iMiddleware, MiddlewareStack } from './compose/middleware'
 import { Bucket } from './compose/bucket'
 import { Emitter } from './compose/emitter'
 import { Pipeline } from './compose/pipeline'
-import { Context, ContextInit, PipeAxiosInit, RequestParams } from './context'
+import {
+  Context,
+  ContextInit,
+  WuhaoNetworkInit,
+  RequestParams
+} from './context'
 
-export class PipeAxios {
-  static simpleInstance: PipeAxios
+export class WuhaoNetwork {
+  static simpleInstance: WuhaoNetwork
 
   pipe: Pipeline = new Pipeline()
   bucket: Bucket = new Bucket()
   emitter: Emitter = new Emitter()
 
-  processor: ProcessorStack
   service: ServiceStack
+  processor: ProcessorStack
   middleware: MiddlewareStack
 
-  constructor(props?: PipeAxiosInit) {
+  constructor(props?: WuhaoNetworkInit) {
     this.processor = new ProcessorStack(props)
     this.service = new ServiceStack(props)
     this.middleware = new MiddlewareStack(props)
@@ -107,22 +112,22 @@ const MIDDLEWARE_FLAG = Symbol('middleware')
  * @param props 初始化参数
  * @returns
  * @example
- *  app.use(createPipeAxios())
+ *  app.use(createWuhaoNetwork())
  */
-export function createPipeAxios(props?: PipeAxiosInit) {
-  if (!PipeAxios.simpleInstance) {
+export function createWuhaoNetwork(props?: WuhaoNetworkInit) {
+  if (!WuhaoNetwork.simpleInstance) {
     const reflectServices =
       Reflect.getMetadata(SERVICE_FLAG, ServiceStack) || []
     const reflectMiddlewares =
       Reflect.getMetadata(MIDDLEWARE_FLAG, MiddlewareStack) || []
     const { services = [], middlewares = [], ...remain } = props
-    PipeAxios.simpleInstance = new PipeAxios({
+    WuhaoNetwork.simpleInstance = new WuhaoNetwork({
       ...remain,
       services: [...services, ...reflectServices],
       middlewares: [...middlewares, ...reflectMiddlewares]
     })
   }
-  return PipeAxios.simpleInstance
+  return WuhaoNetwork.simpleInstance
 }
 
 /**
@@ -133,8 +138,8 @@ export function createPipeAxios(props?: PipeAxiosInit) {
 export function useService(serviceDefine: iService | iArrayService) {
   const service: iService = transformService(serviceDefine)
   if (!service) return
-  if (PipeAxios.simpleInstance) {
-    PipeAxios.simpleInstance.service.register(service)
+  if (WuhaoNetwork.simpleInstance) {
+    WuhaoNetwork.simpleInstance.service.register(service)
   } else {
     const services = Reflect.getMetadata(SERVICE_FLAG, ServiceStack) || []
 
@@ -148,7 +153,7 @@ export function useService(serviceDefine: iService | iArrayService) {
   }
 
   return function (params: RequestParams) {
-    return PipeAxios.simpleInstance.send({
+    return WuhaoNetwork.simpleInstance.send({
       ...service,
       ...params
     })
@@ -162,7 +167,7 @@ export function useService(serviceDefine: iService | iArrayService) {
  */
 export function useMiddleware(middleware: iMiddleware) {
   if (!middleware) return
-  if (!PipeAxios.simpleInstance) {
+  if (!WuhaoNetwork.simpleInstance) {
     const mids: iMiddleware[] =
       Reflect.getMetadata(MIDDLEWARE_FLAG, MiddlewareStack) || []
     if (mids.some(mid => mid.name === middleware.name)) {
@@ -172,7 +177,7 @@ export function useMiddleware(middleware: iMiddleware) {
     Reflect.defineMetadata(MIDDLEWARE_FLAG, mids, MiddlewareStack)
     return middleware.name
   }
-  return PipeAxios.simpleInstance.middleware.register(middleware)
+  return WuhaoNetwork.simpleInstance.middleware.register(middleware)
 }
 
 /**
@@ -182,11 +187,11 @@ export function useMiddleware(middleware: iMiddleware) {
  * @returns
  */
 export function useFetch(name: string, params?: RequestParams) {
-  if (!PipeAxios.simpleInstance) return
-  const service = PipeAxios.simpleInstance.service.sources.find(
+  if (!WuhaoNetwork.simpleInstance) return
+  const service = WuhaoNetwork.simpleInstance.service.sources.find(
     item => item.name === name
   )
-  return PipeAxios.simpleInstance.send({
+  return WuhaoNetwork.simpleInstance.send({
     ...service,
     ...params
   })

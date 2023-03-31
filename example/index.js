@@ -1,6 +1,6 @@
 export { axios } from 'https://cdn.skypack.dev/axios'
 
-import { PipeAxios } from '../dist/index.esm.js'
+import { WuhaoNetwork } from '../dist/index.esm.js'
 
 const services = [
   {
@@ -24,7 +24,7 @@ const services = [
   ['DeleteUser', 'delete', '/api/user']
 ]
 
-const pipe = new PipeAxios({
+const pipe = new WuhaoNetwork({
   services
 })
 // 注册服务处理中间件

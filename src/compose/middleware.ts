@@ -1,5 +1,5 @@
 import { isFunction } from '../utils/type'
-import { PipeAxiosInit, Stack, iHandler } from '../context'
+import { WuhaoNetworkInit, Stack, iHandler } from '../context'
 
 export interface iMiddleware extends iHandler {
   at: string
@@ -14,7 +14,7 @@ export class BaseMiddleware implements iMiddleware {
 export class MiddlewareStack implements Stack<iMiddleware> {
   sources: iMiddleware[] = []
 
-  constructor(props: PipeAxiosInit) {
+  constructor(props: WuhaoNetworkInit) {
     if (props?.middlewares?.length > 0) {
       this.sources = props.middlewares.filter(this.verify)
     }

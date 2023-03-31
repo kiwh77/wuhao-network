@@ -14,7 +14,7 @@ module.exports = {
     {
       file: 'dist/index.umd.js',
       format: 'umd',
-      name: 'PipeAxios',
+      name: 'WuhaoNetwork',
       sourcemap: isDev,
       globals: {
         axios: 'axios'
@@ -23,7 +23,7 @@ module.exports = {
     {
       file: './dist/index.esm.js',
       format: 'es',
-      name: 'PipeAxios',
+      name: 'WuhaoNetwork',
       sourcemap: isDev,
       globals: {
         axios: 'axios'
@@ -32,7 +32,7 @@ module.exports = {
     {
       file: './dist/index.cjs.js',
       format: 'cjs',
-      name: 'PipeAxios',
+      name: 'WuhaoNetwork',
       sourcemap: isDev,
       globals: {
         axios: 'axios'
