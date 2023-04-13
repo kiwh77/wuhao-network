@@ -10,12 +10,7 @@ import { iMiddleware, MiddlewareStack } from './compose/middleware'
 import { Bucket } from './compose/bucket'
 import { Emitter } from './compose/emitter'
 import { Pipeline } from './compose/pipeline'
-import {
-  Context,
-  ContextInit,
-  WuhaoNetworkInit,
-  RequestParams
-} from './context'
+import { Context, ContextInit, NetworkInit, RequestParams } from './context'
 
 export class WuhaoNetwork {
   static simpleInstance: WuhaoNetwork
@@ -28,7 +23,7 @@ export class WuhaoNetwork {
   processor: ProcessorStack
   middleware: MiddlewareStack
 
-  constructor(props?: WuhaoNetworkInit) {
+  constructor(props?: NetworkInit) {
     this.processor = new ProcessorStack(props)
     this.service = new ServiceStack(props)
     this.middleware = new MiddlewareStack(props)
@@ -112,15 +107,15 @@ const MIDDLEWARE_FLAG = Symbol('middleware')
  * @param props 初始化参数
  * @returns
  * @example
- *  app.use(createWuhaoNetwork())
+ *  app.use(createNetwork())
  */
-export function createWuhaoNetwork(props?: WuhaoNetworkInit) {
+export function createNetwork(props?: NetworkInit) {
   if (!WuhaoNetwork.simpleInstance) {
     const reflectServices =
       Reflect.getMetadata(SERVICE_FLAG, ServiceStack) || []
     const reflectMiddlewares =
       Reflect.getMetadata(MIDDLEWARE_FLAG, MiddlewareStack) || []
-    const { services = [], middlewares = [], ...remain } = props
+    const { services = [], middlewares = [], ...remain } = props || {}
     WuhaoNetwork.simpleInstance = new WuhaoNetwork({
       ...remain,
       services: [...services, ...reflectServices],
@@ -135,7 +130,9 @@ export function createWuhaoNetwork(props?: WuhaoNetworkInit) {
  * @param serviceDefine: iService | iArrayService
  * @returns request(params: RequestParams)
  */
-export function useService(serviceDefine: iService | iArrayService) {
+export function useService(
+  serviceDefine: iService | iArrayService
+): (params: RequestParams) => {} {
   const service: iService = transformService(serviceDefine)
   if (!service) return
   if (WuhaoNetwork.simpleInstance) {

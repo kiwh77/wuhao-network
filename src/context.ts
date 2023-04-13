@@ -51,7 +51,7 @@ export type RequestOptions = {
 /**
  * 初始化请求类参数
  */
-export interface WuhaoNetworkInit {
+export interface NetworkInit {
   /** 重复请求间隔，默认为0，表示不限制 */
   interval?: number
   /** 请求配置 */

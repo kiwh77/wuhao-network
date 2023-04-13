@@ -1,5 +1,5 @@
 import { isFunction } from '../utils/type'
-import { WuhaoNetworkInit, Stack, iHandler } from '../context'
+import { NetworkInit, Stack, iHandler } from '../context'
 
 export interface iMiddleware extends iHandler {
   at: string
@@ -14,7 +14,7 @@ export class BaseMiddleware implements iMiddleware {
 export class MiddlewareStack implements Stack<iMiddleware> {
   sources: iMiddleware[] = []
 
-  constructor(props: WuhaoNetworkInit) {
+  constructor(props: NetworkInit) {
     if (props?.middlewares?.length > 0) {
       this.sources = props.middlewares.filter(this.verify)
     }

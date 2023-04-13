@@ -1,5 +1,5 @@
 import { RequestParams } from './../context'
-import { WuhaoNetworkInit, Stack } from '../context'
+import { NetworkInit, Stack } from '../context'
 import { isArray, isObject } from '../utils/type'
 import { iMiddleware } from './middleware'
 import 'reflect-metadata'
@@ -87,7 +87,7 @@ export function isService(obj: any) {
 export class ServiceStack implements Stack<iService> {
   sources: iService[] = []
 
-  constructor(props: WuhaoNetworkInit) {
+  constructor(props: NetworkInit) {
     if (props && props.services && props.services.length) {
       this.sources = props.services.reduce(
         (total: Array<iService>, item: iService | iArrayService) => {

@@ -1,4 +1,4 @@
-import { WuhaoNetworkInit, Stack } from '../context'
+import { NetworkInit, Stack } from '../context'
 import { UniqueProcessor } from '../processor/unique.processor'
 import { ConfigProcessor } from '../processor/config.processor'
 import { RequestProcessor } from '../processor/request.processor'
@@ -7,7 +7,7 @@ import { iProcessor, ProcessorTypes } from '../processor/interface'
 export class ProcessorStack implements Stack<iProcessor> {
   sources: iProcessor[] = []
 
-  constructor(props: WuhaoNetworkInit) {
+  constructor(props: NetworkInit) {
     const { interval, requesterConfig } = props || {}
 
     const processors: typeof this.sources = []
