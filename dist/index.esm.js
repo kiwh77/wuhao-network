@@ -1456,12 +1456,12 @@ var RequestProcessor = /** @class */ (function (_super) {
     }
     RequestProcessor.prototype.handle = function (ctx, env) {
         return __awaiter(this, void 0, void 0, function () {
-            var id, ctxParams, config, url, path, method, params, body, cancel, requestParams, _a;
+            var id, ctxParams, config, url, path, method, params, data, cancel, requestParams, _a;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         id = ctx.id, ctxParams = ctx.params, config = ctx.config;
-                        url = ctxParams.url, path = ctxParams.path, method = ctxParams.method, params = ctxParams.params, body = ctxParams.body, cancel = ctxParams.cancel;
+                        url = ctxParams.url, path = ctxParams.path, method = ctxParams.method, params = ctxParams.params, data = ctxParams.data, cancel = ctxParams.cancel;
                         requestParams = __assign({ url: url, method: method }, config);
                         if (id) {
                             requestParams.cancelToken = new Axios.CancelToken(function (cancelFunction) {
@@ -1474,8 +1474,8 @@ var RequestProcessor = /** @class */ (function (_super) {
                             requestParams.url = transformPathParams(url, path);
                         if (params)
                             requestParams.params = params;
-                        if (body)
-                            requestParams.data = body;
+                        if (data)
+                            requestParams.data = data;
                         _a = ctx;
                         return [4 /*yield*/, this.axiosInstance.request(requestParams)];
                     case 1:
@@ -1800,13 +1800,13 @@ var Bucket = /** @class */ (function () {
         this.requests = {};
     }
     Bucket.prototype.getId = function (service) {
-        var url = service.url, method = service.method, params = service.params, path = service.path, body = service.body;
+        var url = service.url, method = service.method, params = service.params, path = service.path, data = service.data;
         return this._getId({
             url: url,
             method: method,
             params: params,
             path: path,
-            body: body
+            data: data
         });
     };
     Bucket.prototype.verify = function (id, interval) {

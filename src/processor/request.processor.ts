@@ -20,7 +20,7 @@ export class RequestProcessor extends BaseProcessor implements iProcessor {
   async handle(ctx: Context, env: Env) {
     const { id, params: ctxParams, config } = ctx
 
-    const { url, path, method, params, body, cancel } = ctxParams
+    const { url, path, method, params, data, cancel } = ctxParams
 
     const requestParams: AxiosRequestConfig = { url, method, ...config }
 
@@ -33,7 +33,7 @@ export class RequestProcessor extends BaseProcessor implements iProcessor {
 
     if (path) requestParams.url = transformPathParams(url, path)
     if (params) requestParams.params = params
-    if (body) requestParams.data = body
+    if (data) requestParams.data = data
 
     ctx.response = await this.axiosInstance.request(requestParams)
 

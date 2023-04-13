@@ -7,13 +7,13 @@ export class Bucket {
   } = {}
 
   getId(service: RequestOptions) {
-    const { url, method, params, path, body } = service
+    const { url, method, params, path, data } = service
     return this._getId({
       url,
       method,
       params,
       path,
-      body
+      data
     })
   }
 

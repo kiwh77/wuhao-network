@@ -29,7 +29,7 @@ export type RequestParams = {
    * 请求体参数
    * 例：[POST]/api/user，请求体参数使用{ body: { key: value } }
    */
-  body?: any
+  data?: any
   /**
    * 路径参数，例：/api/user/:id，传递id参数时，应传递 { path: { id: 'xxx' } }
    */

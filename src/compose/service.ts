@@ -63,7 +63,7 @@ export interface iService extends iServiceBase {
    */
   default?: Pick<RequestParams, 'path'> &
     Pick<RequestParams, 'params'> &
-    Pick<RequestParams, 'body'>
+    Pick<RequestParams, 'data'>
   /**
    * 特性
    */
