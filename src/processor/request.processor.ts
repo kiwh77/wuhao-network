@@ -32,19 +32,8 @@ export class RequestProcessor extends BaseProcessor implements iProcessor {
     }
 
     if (path) requestParams.url = transformPathParams(url, path)
-
-    switch (method.toLowerCase()) {
-      case 'get':
-        if (params) {
-          requestParams.params = params
-        }
-        break
-      case 'put':
-        if (body) {
-          requestParams.data = body
-        }
-        break
-    }
+    if (params) requestParams.params = params
+    if (body) requestParams.data = body
 
     ctx.response = await this.axiosInstance.request(requestParams)
 

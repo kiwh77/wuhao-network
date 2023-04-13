@@ -1476,18 +1476,10 @@
                             }
                             if (path)
                                 requestParams.url = transformPathParams(url, path);
-                            switch (method.toLowerCase()) {
-                                case 'get':
-                                    if (params) {
-                                        requestParams.params = params;
-                                    }
-                                    break;
-                                case 'put':
-                                    if (body) {
-                                        requestParams.data = body;
-                                    }
-                                    break;
-                            }
+                            if (params)
+                                requestParams.params = params;
+                            if (body)
+                                requestParams.data = body;
                             _a = ctx;
                             return [4 /*yield*/, this.axiosInstance.request(requestParams)];
                         case 1:
