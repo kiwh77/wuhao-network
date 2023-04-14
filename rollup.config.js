@@ -3,6 +3,7 @@ const typescript = require('@rollup/plugin-typescript')
 const resolve = require('@rollup/plugin-node-resolve')
 const commonjs = require('@rollup/plugin-commonjs')
 const json = require('@rollup/plugin-json')
+// const nodePolyfills = require('rollup-plugin-polyfill-node')
 // const serve = require('rollup-plugin-serve')
 // const livereload = require('rollup-plugin-livereload')
 
@@ -12,31 +13,12 @@ module.exports = {
   input: './src/pipe.ts',
   output: [
     {
-      file: 'dist/index.umd.js',
-      format: 'umd',
-      name: 'WuhaoNetwork',
-      sourcemap: isDev,
-      globals: {
-        axios: 'axios'
-      }
-    },
-    {
       file: './dist/index.esm.js',
-      format: 'es',
-      name: 'WuhaoNetwork',
-      sourcemap: isDev,
-      globals: {
-        axios: 'axios'
-      }
+      format: 'es'
     },
     {
       file: './dist/index.cjs.js',
-      format: 'cjs',
-      name: 'WuhaoNetwork',
-      sourcemap: isDev,
-      globals: {
-        axios: 'axios'
-      }
+      format: 'cjs'
     }
   ],
   external: ['axios'],

@@ -1,3 +1,9 @@
+.vscode
+.babelrc
+.gitignore
+jest.config.ts
+tsconfig.eslint.json
+tsconfig.json
 example
 coverage
 src
