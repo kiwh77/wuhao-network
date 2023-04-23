@@ -24,9 +24,9 @@ export class WuhaoNetwork {
   middleware: MiddlewareStack
 
   constructor(props?: NetworkInit) {
+    this.middleware = new MiddlewareStack(props)
     this.processor = new ProcessorStack(props)
     this.service = new ServiceStack(props)
-    this.middleware = new MiddlewareStack(props)
   }
 
   async send(options: ContextInit) {

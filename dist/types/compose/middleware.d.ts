@@ -1,6 +1,7 @@
 import { NetworkInit, Stack, iHandler } from '../context';
 export interface iMiddleware extends iHandler {
     at: string;
+    global?: boolean;
 }
 export declare class BaseMiddleware implements iMiddleware {
     at: string;
@@ -13,4 +14,5 @@ export declare class MiddlewareStack implements Stack<iMiddleware> {
     register<T extends iMiddleware>(middleware: T): string;
     verify(mid: iMiddleware): Boolean;
     find(name: string): iMiddleware;
+    getGlobal(at: string): iMiddleware[];
 }

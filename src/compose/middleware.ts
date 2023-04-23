@@ -3,6 +3,7 @@ import { NetworkInit, Stack, iHandler } from '../context'
 
 export interface iMiddleware extends iHandler {
   at: string
+  global?: boolean
 }
 
 export class BaseMiddleware implements iMiddleware {
@@ -33,5 +34,8 @@ export class MiddlewareStack implements Stack<iMiddleware> {
 
   find(name: string) {
     return this.sources.find(mid => mid.name === name)
+  }
+  getGlobal(at: string) {
+    return this.sources.filter(mid => mid.global === true && mid.at === at)
   }
 }

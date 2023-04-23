@@ -7,12 +7,10 @@ export class BaseProcessor implements iProcessor {
   constructor() {
     const originHandle = this.handle
     this.handle = async function (ctx: Context, env: Env) {
-      const middlewares = ctx.service?.middleware
-      if (!middlewares || middlewares.length === 0) {
-        return originHandle.call(this, ctx, env)
-      }
+      const middlewares = ctx.service?.middleware || []
 
       const beforeName = 'before' + UpperFirstWord(this.name)
+
       env.emitter.emit(beforeName, { name: this.name, ctx })
       const beforeMiddlewares = middlewares.reduce((total, middleware) => {
         if (typeof middleware === 'string') {
@@ -25,8 +23,13 @@ export class BaseProcessor implements iProcessor {
         return total
       }, [])
 
-      if (beforeMiddlewares.length > 0) {
-        await env.pipe.exec(beforeMiddlewares, ctx, env)
+      const globalBeforeMiddlewares = env.middleware.getGlobal(beforeName)
+      if (beforeMiddlewares.length > 0 || globalBeforeMiddlewares.length > 0) {
+        await env.pipe.exec(
+          [...globalBeforeMiddlewares, ...beforeMiddlewares],
+          ctx,
+          env
+        )
       }
 
       const result = await originHandle.call(this, ctx, env)
@@ -42,8 +45,14 @@ export class BaseProcessor implements iProcessor {
         }
         return total
       }, [])
-      if (afterMiddlewares.length > 0) {
-        await env.pipe.exec(afterMiddlewares, ctx, env)
+      const globalAfterMiddlewares = env.middleware.getGlobal(afterName)
+
+      if (afterMiddlewares.length > 0 || globalAfterMiddlewares.length > 0) {
+        await env.pipe.exec(
+          [...globalAfterMiddlewares, ...afterMiddlewares],
+          ctx,
+          env
+        )
       }
 
       env.emitter.emit(beforeName, { name: this.name, ctx })
