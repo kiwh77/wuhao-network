@@ -1,6 +1,6 @@
 {
   "name": "wuhao-network",
-  "version": "1.0.9",
+  "version": "1.0.11",
   "description": "Pipeline-initiated request, Service for orderly management",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",

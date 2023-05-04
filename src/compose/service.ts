@@ -63,7 +63,14 @@ export interface iService extends iServiceBase {
    */
   default?: Pick<RequestParams, 'path'> &
     Pick<RequestParams, 'params'> &
-    Pick<RequestParams, 'data'>
+    Pick<RequestParams, 'data'> & {
+      /**
+       * 混合模式
+       * last: 默认，使用时传入为主
+       * default: 默认参数为主
+       */
+      assign?: 'default' | 'replace' | 'mixin'
+    }
   /**
    * 特性
    */

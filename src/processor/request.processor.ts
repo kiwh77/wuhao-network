@@ -6,6 +6,7 @@ import Axios, {
 } from 'axios'
 import { BaseProcessor, iProcessor } from './interface'
 import { transformPathParams } from '../utils/transform'
+import { objectAssignDeep, objectAssignDeepNoMutate } from '../utils/assign'
 
 export class RequestProcessor extends BaseProcessor implements iProcessor {
   name = 'request'
@@ -18,7 +19,7 @@ export class RequestProcessor extends BaseProcessor implements iProcessor {
   }
 
   async handle(ctx: Context, env: Env) {
-    const { id, params: ctxParams, config } = ctx
+    const { id, params: ctxParams, config, service } = ctx
 
     const { url, path, method, params, data, cancel } = ctxParams
 
@@ -31,9 +32,29 @@ export class RequestProcessor extends BaseProcessor implements iProcessor {
       })
     }
 
-    if (path) requestParams.url = transformPathParams(url, path)
-    if (params) requestParams.params = params
-    if (data) requestParams.data = data
+    let newPath, newParams, newData
+    switch (service.default.assign) {
+      case 'default':
+        newPath = objectAssignDeep(path, service?.default?.path)
+        newParams = objectAssignDeep(params, service?.default?.params)
+        newData = objectAssignDeep(data, service?.default?.data)
+        break
+      case 'mixin':
+        newPath = objectAssignDeepNoMutate(service?.default?.path, path)
+        newParams = objectAssignDeepNoMutate(service?.default?.params, params)
+        newData = objectAssignDeepNoMutate(service?.default?.data, data)
+        break
+      case 'replace':
+      default:
+        newPath = objectAssignDeep(service?.default?.path, path)
+        newParams = objectAssignDeep(service?.default?.params, params)
+        newData = objectAssignDeep(service?.default?.data, data)
+        break
+    }
+
+    requestParams.url = transformPathParams(url, newPath)
+    requestParams.params = newParams
+    requestParams.data = newData
 
     ctx.response = await this.axiosInstance.request(requestParams)
 
