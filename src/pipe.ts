@@ -11,6 +11,7 @@ import { Bucket } from './compose/bucket'
 import { Emitter } from './compose/emitter'
 import { Pipeline } from './compose/pipeline'
 import { Context, ContextInit, NetworkInit, RequestParams } from './context'
+import { AxiosResponse } from 'axios'
 
 export class WuhaoNetwork {
   static simpleInstance: WuhaoNetwork
@@ -132,7 +133,7 @@ export function createNetwork(props?: NetworkInit) {
  */
 export function useService(
   serviceDefine: iService | iArrayService
-): (params: RequestParams) => {} {
+): (params?: RequestParams) => Promise<AxiosResponse<any, any>> {
   const service: iService = transformService(serviceDefine)
   if (!service) return
   if (WuhaoNetwork.simpleInstance) {
@@ -149,10 +150,10 @@ export function useService(
     Reflect.defineMetadata(SERVICE_FLAG, services, ServiceStack)
   }
 
-  return function (params: RequestParams) {
+  return function (params?: RequestParams) {
     return WuhaoNetwork.simpleInstance.send({
       ...service,
-      ...params
+      ...(params || {})
     })
   }
 }

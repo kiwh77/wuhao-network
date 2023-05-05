@@ -6,6 +6,7 @@ import { Bucket } from './compose/bucket';
 import { Emitter } from './compose/emitter';
 import { Pipeline } from './compose/pipeline';
 import { ContextInit, NetworkInit, RequestParams } from './context';
+import { AxiosResponse } from 'axios';
 export declare class WuhaoNetwork {
     static simpleInstance: WuhaoNetwork;
     pipe: Pipeline;
@@ -15,17 +16,17 @@ export declare class WuhaoNetwork {
     processor: ProcessorStack;
     middleware: MiddlewareStack;
     constructor(props?: NetworkInit);
-    send(options: ContextInit): Promise<import("axios").AxiosResponse<any, any>>;
+    send(options: ContextInit): Promise<AxiosResponse<any, any>>;
     /**
      * 快速发起get请求
      * @param url
      * @param options
      */
-    get(url: string, options?: RequestParams): Promise<import("axios").AxiosResponse<any, any>>;
-    post(url: string, options?: RequestParams): Promise<import("axios").AxiosResponse<any, any>>;
-    put(url: string, options?: RequestParams): Promise<import("axios").AxiosResponse<any, any>>;
-    delete(url: string, options?: RequestParams): Promise<import("axios").AxiosResponse<any, any>>;
-    patch(url: string, options?: RequestParams): Promise<import("axios").AxiosResponse<any, any>>;
+    get(url: string, options?: RequestParams): Promise<AxiosResponse<any, any>>;
+    post(url: string, options?: RequestParams): Promise<AxiosResponse<any, any>>;
+    put(url: string, options?: RequestParams): Promise<AxiosResponse<any, any>>;
+    delete(url: string, options?: RequestParams): Promise<AxiosResponse<any, any>>;
+    patch(url: string, options?: RequestParams): Promise<AxiosResponse<any, any>>;
     install(app: any): void;
 }
 /**
@@ -41,7 +42,7 @@ export declare function createNetwork(props?: NetworkInit): WuhaoNetwork;
  * @param serviceDefine: iService | iArrayService
  * @returns request(params: RequestParams)
  */
-export declare function useService(serviceDefine: iService | iArrayService): (params: RequestParams) => {};
+export declare function useService(serviceDefine: iService | iArrayService): (params?: RequestParams) => Promise<AxiosResponse<any, any>>;
 /**
  * 注册中间件
  * @param middleware 中间件参数
@@ -54,4 +55,4 @@ export declare function useMiddleware(middleware: iMiddleware): string;
  * @param params 请求参数
  * @returns
  */
-export declare function useFetch(name: string, params?: RequestParams): Promise<import("axios").AxiosResponse<any, any>>;
+export declare function useFetch(name: string, params?: RequestParams): Promise<AxiosResponse<any, any>>;
