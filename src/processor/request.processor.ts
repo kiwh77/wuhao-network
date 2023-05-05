@@ -33,7 +33,7 @@ export class RequestProcessor extends BaseProcessor implements iProcessor {
     }
 
     let newPath, newParams, newData
-    switch (service.default.assign) {
+    switch (service?.default?.assign) {
       case 'default':
         newPath = objectAssignDeep(path, service?.default?.path)
         newParams = objectAssignDeep(params, service?.default?.params)
