@@ -79,8 +79,34 @@ export declare class Context {
     initParams: ContextInit;
     params: RequestOptions;
     service: iService;
+    emitter: Emitter;
     config?: AxiosRequestConfig;
     response?: AxiosResponse;
     cancel?: Function;
     constructor(props: ContextInit);
 }
+export declare enum ProcessType {
+    request = "request",
+    config = "config",
+    unique = "unique"
+}
+type ProcessTypeTip = keyof typeof ProcessType | string;
+/**
+ * beforeXxxx
+ * @param type {string} processor name
+ * @returns
+ */
+export declare function Before(type: ProcessTypeTip): string;
+/**
+ * afterXxxx
+ * @param type {string} processor name
+ * @returns
+ */
+export declare function After(type: ProcessTypeTip): string;
+/**
+ * wrongXxxx
+ * @param type {string} processor name
+ * @returns
+ */
+export declare function Wrong(type: ProcessTypeTip): string;
+export {};

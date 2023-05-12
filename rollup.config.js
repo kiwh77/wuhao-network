@@ -7,7 +7,7 @@ const json = require('@rollup/plugin-json')
 const isDev = process.env.NODE_ENV === 'developer'
 
 module.exports = {
-  input: './src/pipe.ts',
+  input: './src/index.ts',
   output: [
     {
       file: './dist/index.esm.js',

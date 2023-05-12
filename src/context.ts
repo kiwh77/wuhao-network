@@ -10,6 +10,7 @@ import {
 } from './compose/service'
 import { Bucket } from './compose/bucket'
 import { Emitter } from './compose/emitter'
+import { UpperFirstWord } from './utils/string'
 
 /**
  * 请求配置
@@ -91,6 +92,7 @@ export class Context {
   initParams: ContextInit
   params: RequestOptions
   service: iService
+  emitter: Emitter
   config?: AxiosRequestConfig
   response?: AxiosResponse
   cancel?: Function
@@ -98,4 +100,39 @@ export class Context {
   constructor(props: ContextInit) {
     this.initParams = props
   }
+}
+
+export enum ProcessType {
+  request = 'request',
+  config = 'config',
+  unique = 'unique'
+}
+
+type ProcessTypeTip = keyof typeof ProcessType | string
+
+/**
+ * beforeXxxx
+ * @param type {string} processor name
+ * @returns
+ */
+export function Before(type: ProcessTypeTip) {
+  return 'before' + UpperFirstWord(type)
+}
+
+/**
+ * afterXxxx
+ * @param type {string} processor name
+ * @returns
+ */
+export function After(type: ProcessTypeTip) {
+  return 'after' + UpperFirstWord(type)
+}
+
+/**
+ * wrongXxxx
+ * @param type {string} processor name
+ * @returns
+ */
+export function Wrong(type: ProcessTypeTip) {
+  return 'error' + UpperFirstWord(type)
 }

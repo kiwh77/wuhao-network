@@ -1,4 +1,4 @@
-import { Context, Env } from '../context'
+import { Context, Env, ProcessType } from '../context'
 import { BaseProcessor, iProcessor } from './interface'
 
 interface UniqueInit {
@@ -13,7 +13,7 @@ export class UniqueError extends Error {
 }
 
 export class UniqueProcessor extends BaseProcessor implements iProcessor {
-  name = 'unique'
+  name = ProcessType.unique
 
   interval = 0
 

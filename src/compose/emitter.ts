@@ -1,11 +1,12 @@
+type eventType = string | number | symbol
 /**
  * 请求事件处理器
  */
 export class Emitter {
-  events: { [key: string]: Array<Function> } = {}
+  events: { [key: eventType]: Array<Function> } = {}
 
-  on(event: string, func: Function) {
-    if (!event || !func) return
+  on(event: eventType, func: Function) {
+    if (!event || !func || typeof func !== 'function') return
 
     const handlers = this.events[event]
     if (!handlers) {
@@ -14,7 +15,7 @@ export class Emitter {
       handlers.push(func)
     }
   }
-  off(event: string, func: Function) {
+  off(event: eventType, func: Function) {
     if (!event) return
 
     const handlers = this.events[event]
@@ -26,7 +27,7 @@ export class Emitter {
       this.events[event] = []
     }
   }
-  emit(event: string, ...args: any[]) {
+  emit(event: eventType, ...args: any[]) {
     const handlers = this.events[event] || []
     handlers.forEach(handler => {
       if (handler) handler(...args)

@@ -2,6 +2,66 @@
 
 var Axios = require('axios');
 
+function getType(obj) {
+    var _a = toString.apply(obj).match(/^\[object (\w*)\]$/) || [], type = _a[1];
+    return type;
+}
+function isObject(obj) {
+    return obj && getType(obj) === 'Object';
+}
+function isArray(obj) {
+    return obj && getType(obj) === 'Array';
+}
+function isString(obj) {
+    return obj && getType(obj) === 'String';
+}
+function isFunction(obj) {
+    return obj && getType(obj) === 'Function';
+}
+
+function UpperFirstWord(str) {
+    if (!str || !isString(str) || str.length === 0)
+        return str;
+    return str.substring(0, 1).toUpperCase() + str.substring(1, str.length);
+}
+
+var Context = /** @class */ (function () {
+    function Context(props) {
+        this.initParams = props;
+    }
+    return Context;
+}());
+exports.ProcessType = void 0;
+(function (ProcessType) {
+    ProcessType["request"] = "request";
+    ProcessType["config"] = "config";
+    ProcessType["unique"] = "unique";
+})(exports.ProcessType || (exports.ProcessType = {}));
+/**
+ * beforeXxxx
+ * @param type {string} processor name
+ * @returns
+ */
+function Before(type) {
+    return 'before' + UpperFirstWord(type);
+}
+/**
+ * afterXxxx
+ * @param type {string} processor name
+ * @returns
+ */
+function After(type) {
+    return 'after' + UpperFirstWord(type);
+}
+/**
+ * wrongXxxx
+ * @param type {string} processor name
+ * @returns
+ */
+function Wrong(type) {
+    return 'error' + UpperFirstWord(type);
+}
+
 /******************************************************************************
 Copyright (c) Microsoft Corporation.
 
@@ -1239,23 +1299,6 @@ var Reflect$1;
     });
 })(Reflect$1 || (Reflect$1 = {}));
 
-function getType(obj) {
-    var _a = toString.apply(obj).match(/^\[object (\w*)\]$/) || [], type = _a[1];
-    return type;
-}
-function isObject(obj) {
-    return obj && getType(obj) === 'Object';
-}
-function isArray(obj) {
-    return obj && getType(obj) === 'Array';
-}
-function isString(obj) {
-    return obj && getType(obj) === 'String';
-}
-function isFunction(obj) {
-    return obj && getType(obj) === 'Function';
-}
-
 function isService(obj) {
     return isObject(obj) && 'name' in obj && 'url' in obj && 'method' in obj;
 }
@@ -1292,12 +1335,6 @@ function transformService(params) {
         service = __assign({ name: name_1, method: method, url: url }, (isObject(advance) ? advance : {}));
     }
     return service;
-}
-
-function UpperFirstWord(str) {
-    if (!str || !isString(str) || str.length === 0)
-        return str;
-    return str.substring(0, 1).toUpperCase() + str.substring(1, str.length);
 }
 
 var BaseProcessor = /** @class */ (function () {
@@ -1378,7 +1415,7 @@ var UniqueProcessor = /** @class */ (function (_super) {
     __extends(UniqueProcessor, _super);
     function UniqueProcessor(props) {
         var _this = _super.call(this) || this;
-        _this.name = 'unique';
+        _this.name = exports.ProcessType.unique;
         _this.interval = 0;
         _this.interval = props.interval;
         return _this;
@@ -1399,7 +1436,7 @@ var ConfigProcessor = /** @class */ (function (_super) {
     __extends(ConfigProcessor, _super);
     function ConfigProcessor() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.name = 'config';
+        _this.name = exports.ProcessType.config;
         return _this;
     }
     ConfigProcessor.prototype.handle = function (ctx, env) {
@@ -1584,14 +1621,14 @@ var RequestProcessor = /** @class */ (function (_super) {
     __extends(RequestProcessor, _super);
     function RequestProcessor(props) {
         var _this = _super.call(this) || this;
-        _this.name = 'request';
+        _this.name = exports.ProcessType.request;
         _this.axiosInstance = Axios.create(props);
         return _this;
     }
     RequestProcessor.prototype.handle = function (ctx, env) {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
         return __awaiter(this, void 0, void 0, function () {
-            var id, ctxParams, config, service, url, path, method, params, data, cancel, requestParams, newPath, newParams, newData, _l;
+            var id, ctxParams, config, service, url, path, method, params, data, cancel, requestParams, newPath, newParams, newData, _l, e_1;
             return __generator(this, function (_m) {
                 switch (_m.label) {
                     case 0:
@@ -1626,12 +1663,24 @@ var RequestProcessor = /** @class */ (function (_super) {
                         requestParams.url = transformPathParams(url, newPath);
                         requestParams.params = newParams;
                         requestParams.data = newData;
+                        _m.label = 1;
+                    case 1:
+                        _m.trys.push([1, 3, 4, 5]);
                         _l = ctx;
                         return [4 /*yield*/, this.axiosInstance.request(requestParams)];
-                    case 1:
+                    case 2:
                         _l.response = _m.sent();
+                        return [3 /*break*/, 5];
+                    case 3:
+                        e_1 = _m.sent();
+                        // 收集错误
+                        env.emitter.emit(Wrong(exports.ProcessType.request), e_1);
                         env.bucket.pop(ctx.id);
-                        return [2 /*return*/];
+                        throw e_1;
+                    case 4:
+                        env.bucket.pop(ctx.id);
+                        return [7 /*endfinally*/];
+                    case 5: return [2 /*return*/];
                 }
             });
         });
@@ -1699,6 +1748,13 @@ var ProcessorStack = /** @class */ (function () {
     return ProcessorStack;
 }());
 
+var BaseMiddleware = /** @class */ (function () {
+    function BaseMiddleware() {
+        this.name = 'base';
+    }
+    BaseMiddleware.prototype.handle = function () { };
+    return BaseMiddleware;
+}());
 var MiddlewareStack = /** @class */ (function () {
     function MiddlewareStack(props) {
         var _a;
@@ -2004,7 +2060,7 @@ var Emitter = /** @class */ (function () {
         this.events = {};
     }
     Emitter.prototype.on = function (event, func) {
-        if (!event || !func)
+        if (!event || !func || typeof func !== 'function')
             return;
         var handlers = this.events[event];
         if (!handlers) {
@@ -2081,13 +2137,6 @@ var Pipeline = /** @class */ (function () {
         });
     };
     return Pipeline;
-}());
-
-var Context = /** @class */ (function () {
-    function Context(props) {
-        this.initParams = props;
-    }
-    return Context;
 }());
 
 var WuhaoNetwork = /** @class */ (function () {
@@ -2229,8 +2278,19 @@ function useFetch(name, params) {
     return WuhaoNetwork.simpleInstance.send(__assign(__assign({}, service), params));
 }
 
+exports.After = After;
+exports.BaseMiddleware = BaseMiddleware;
+exports.BaseProcessor = BaseProcessor;
+exports.Before = Before;
+exports.Context = Context;
+exports.MiddlewareStack = MiddlewareStack;
+exports.ProcessorStack = ProcessorStack;
+exports.ServiceStack = ServiceStack;
+exports.Wrong = Wrong;
 exports.WuhaoNetwork = WuhaoNetwork;
 exports.createNetwork = createNetwork;
+exports.isService = isService;
+exports.transformService = transformService;
 exports.useFetch = useFetch;
 exports.useMiddleware = useMiddleware;
 exports.useService = useService;

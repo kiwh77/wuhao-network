@@ -1,9 +1,9 @@
 import { BaseProcessor, iProcessor } from './interface'
-import { Context, Env } from '../context'
+import { Context, Env, ProcessType } from '../context'
 import { isString } from '../utils/type'
 
 export class ConfigProcessor extends BaseProcessor implements iProcessor {
-  name = 'config'
+  name = ProcessType.config
 
   async handle(ctx: Context, env: Env) {
     const { name, ...remain } = ctx.initParams

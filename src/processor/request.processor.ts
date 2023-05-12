@@ -1,4 +1,4 @@
-import { Context, Env } from '../context'
+import { Context, Env, ProcessType, Wrong } from '../context'
 import Axios, {
   AxiosInstance,
   AxiosRequestConfig,
@@ -9,7 +9,7 @@ import { transformPathParams } from '../utils/transform'
 import { objectAssignDeep, objectAssignDeepNoMutate } from '../utils/assign'
 
 export class RequestProcessor extends BaseProcessor implements iProcessor {
-  name = 'request'
+  name = ProcessType.request
 
   axiosInstance: AxiosInstance
 
@@ -56,8 +56,15 @@ export class RequestProcessor extends BaseProcessor implements iProcessor {
     requestParams.params = newParams
     requestParams.data = newData
 
-    ctx.response = await this.axiosInstance.request(requestParams)
-
-    env.bucket.pop(ctx.id)
+    try {
+      ctx.response = await this.axiosInstance.request(requestParams)
+    } catch (e) {
+      // 收集错误
+      env.emitter.emit(Wrong(ProcessType.request), e)
+      env.bucket.pop(ctx.id)
+      throw e
+    } finally {
+      env.bucket.pop(ctx.id)
+    }
   }
 }
