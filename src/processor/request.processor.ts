@@ -1,4 +1,4 @@
-import { Context, Env, ProcessType, Wrong } from '../context'
+import { Context, Env, ProcessType } from '../context'
 import Axios, {
   AxiosInstance,
   AxiosRequestConfig,
@@ -56,15 +56,8 @@ export class RequestProcessor extends BaseProcessor implements iProcessor {
     requestParams.params = newParams
     requestParams.data = newData
 
-    try {
-      ctx.response = await this.axiosInstance.request(requestParams)
-    } catch (e) {
-      // 收集错误
-      env.emitter.emit(Wrong(ProcessType.request), e)
-      env.bucket.pop(ctx.id)
-      throw e
-    } finally {
-      env.bucket.pop(ctx.id)
-    }
+    ctx.response = await this.axiosInstance.request(requestParams)
+    ctx.response.success = true
+    env.bucket.pop(ctx.id)
   }
 }

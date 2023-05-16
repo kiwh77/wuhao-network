@@ -55,6 +55,10 @@ export interface iService extends iServiceBase {
    */
   tag?: Array<string> | string
   /**
+   * 自定义数据，会跟随整个请求流程，可在中间件中拿到后进行个性化操作
+   */
+  customData?: { [key: string]: any }
+  /**
    * 描述
    */
   description?: string

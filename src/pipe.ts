@@ -10,7 +10,14 @@ import { iMiddleware, MiddlewareStack } from './compose/middleware'
 import { Bucket } from './compose/bucket'
 import { Emitter } from './compose/emitter'
 import { Pipeline } from './compose/pipeline'
-import { Context, ContextInit, NetworkInit, RequestParams } from './context'
+import {
+  Context,
+  ContextInit,
+  NetworkInit,
+  ProcessType,
+  RequestParams,
+  Wrong
+} from './context'
 import { AxiosResponse } from 'axios'
 
 export class WuhaoNetwork {
@@ -120,7 +127,14 @@ export function createNetwork(props?: NetworkInit) {
     WuhaoNetwork.simpleInstance = new WuhaoNetwork({
       ...remain,
       services: [...services, ...reflectServices],
-      middlewares: [...middlewares, ...reflectMiddlewares]
+      middlewares: [
+        ...middlewares.map(item => {
+          if (typeof item.global === 'boolean') return item
+          item.global = true
+          return item
+        }),
+        ...reflectMiddlewares
+      ]
     })
   }
   return WuhaoNetwork.simpleInstance

@@ -94,7 +94,10 @@ export class Context {
   service: iService
   emitter: Emitter
   config?: AxiosRequestConfig
-  response?: AxiosResponse
+  response?: AxiosResponse & {
+    /** 是否请求成功，默认请求成功即设置为true */
+    success?: boolean
+  }
   cancel?: Function
 
   constructor(props: ContextInit) {

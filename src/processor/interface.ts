@@ -1,4 +1,4 @@
-import { Context, Env, iHandler } from '../context'
+import { Context, Env, Wrong, iHandler } from '../context'
 import { UpperFirstWord } from '../utils/string'
 
 export class BaseProcessor implements iProcessor {
@@ -24,40 +24,49 @@ export class BaseProcessor implements iProcessor {
       }, [])
 
       const globalBeforeMiddlewares = env.middleware.getGlobal(beforeName)
-      if (beforeMiddlewares.length > 0 || globalBeforeMiddlewares.length > 0) {
-        await env.pipe.exec(
-          [...globalBeforeMiddlewares, ...beforeMiddlewares],
-          ctx,
-          env
-        )
-      }
+      try {
+        if (
+          beforeMiddlewares.length > 0 ||
+          globalBeforeMiddlewares.length > 0
+        ) {
+          env.emitter.emit(beforeName, { name: this.name, ctx })
 
-      const result = await originHandle.call(this, ctx, env)
-
-      const afterName = 'after' + UpperFirstWord(this.name)
-      const afterMiddlewares = middlewares.reduce((total, middleware) => {
-        if (typeof middleware === 'string') {
-          const midInstance = env.middleware.find(middleware)
-          if (midInstance && midInstance.at === afterName)
-            total.push(midInstance)
-        } else {
-          if (middleware.at === afterName) total.push(middleware)
+          await env.pipe.exec(
+            [...globalBeforeMiddlewares, ...beforeMiddlewares],
+            ctx,
+            env
+          )
         }
-        return total
-      }, [])
-      const globalAfterMiddlewares = env.middleware.getGlobal(afterName)
 
-      if (afterMiddlewares.length > 0 || globalAfterMiddlewares.length > 0) {
-        await env.pipe.exec(
-          [...globalAfterMiddlewares, ...afterMiddlewares],
-          ctx,
-          env
-        )
+        const result = await originHandle.call(this, ctx, env)
+
+        const afterName = 'after' + UpperFirstWord(this.name)
+        const afterMiddlewares = middlewares.reduce((total, middleware) => {
+          if (typeof middleware === 'string') {
+            const midInstance = env.middleware.find(middleware)
+            if (midInstance && midInstance.at === afterName)
+              total.push(midInstance)
+          } else {
+            if (middleware.at === afterName) total.push(middleware)
+          }
+          return total
+        }, [])
+        const globalAfterMiddlewares = env.middleware.getGlobal(afterName)
+
+        if (afterMiddlewares.length > 0 || globalAfterMiddlewares.length > 0) {
+          await env.pipe.exec(
+            [...globalAfterMiddlewares, ...afterMiddlewares],
+            ctx,
+            env
+          )
+        }
+        env.emitter.emit(afterName, { name: this.name, ctx })
+
+        return result
+      } catch (error) {
+        env.emitter.emit(Wrong(this.name), error)
+        throw error
       }
-
-      env.emitter.emit(beforeName, { name: this.name, ctx })
-
-      return result
     }.bind(this)
   }
 

@@ -16,17 +16,29 @@ export declare class WuhaoNetwork {
     processor: ProcessorStack;
     middleware: MiddlewareStack;
     constructor(props?: NetworkInit);
-    send(options: ContextInit): Promise<AxiosResponse<any, any>>;
+    send(options: ContextInit): Promise<AxiosResponse<any, any> & {
+        success?: boolean;
+    }>;
     /**
      * 快速发起get请求
      * @param url
      * @param options
      */
-    get(url: string, options?: RequestParams): Promise<AxiosResponse<any, any>>;
-    post(url: string, options?: RequestParams): Promise<AxiosResponse<any, any>>;
-    put(url: string, options?: RequestParams): Promise<AxiosResponse<any, any>>;
-    delete(url: string, options?: RequestParams): Promise<AxiosResponse<any, any>>;
-    patch(url: string, options?: RequestParams): Promise<AxiosResponse<any, any>>;
+    get(url: string, options?: RequestParams): Promise<AxiosResponse<any, any> & {
+        success?: boolean;
+    }>;
+    post(url: string, options?: RequestParams): Promise<AxiosResponse<any, any> & {
+        success?: boolean;
+    }>;
+    put(url: string, options?: RequestParams): Promise<AxiosResponse<any, any> & {
+        success?: boolean;
+    }>;
+    delete(url: string, options?: RequestParams): Promise<AxiosResponse<any, any> & {
+        success?: boolean;
+    }>;
+    patch(url: string, options?: RequestParams): Promise<AxiosResponse<any, any> & {
+        success?: boolean;
+    }>;
     install(app: any): void;
 }
 /**
@@ -55,4 +67,6 @@ export declare function useMiddleware(middleware: iMiddleware): string;
  * @param params 请求参数
  * @returns
  */
-export declare function useFetch(name: string, params?: RequestParams): Promise<AxiosResponse<any, any>>;
+export declare function useFetch(name: string, params?: RequestParams): Promise<AxiosResponse<any, any> & {
+    success?: boolean;
+}>;
