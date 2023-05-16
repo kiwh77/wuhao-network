@@ -52,9 +52,10 @@ export declare function createNetwork(props?: NetworkInit): WuhaoNetwork;
 /**
  * 定义服务接口，返回调用函数
  * @param serviceDefine: iService | iArrayService
+ * @param register: Boolean 是否注册
  * @returns request(params: RequestParams)
  */
-export declare function useService(serviceDefine: iService | iArrayService): (params?: RequestParams) => Promise<AxiosResponse<any, any>>;
+export declare function useService(serviceDefine: iService | iArrayService, register?: boolean): (params?: RequestParams) => Promise<AxiosResponse<any, any>>;
 /**
  * 注册中间件
  * @param middleware 中间件参数

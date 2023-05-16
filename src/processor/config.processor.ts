@@ -10,11 +10,6 @@ export class ConfigProcessor extends BaseProcessor implements iProcessor {
     if (name && isString(name)) {
       const service = env.service.find(name)
       ctx.service = service
-
-      ctx.params = {
-        ...service.default,
-        ...ctx.params
-      }
     } else if (remain.url) {
       ctx.params = {
         method: remain.method || 'get',

@@ -11,11 +11,13 @@ module.exports = {
   output: [
     {
       file: './dist/index.esm.js',
-      format: 'es'
+      format: 'es',
+      sourcemap: true
     },
     {
       file: './dist/index.cjs.js',
-      format: 'cjs'
+      format: 'cjs',
+      sourcemap: true
     }
   ],
   external: ['axios'],

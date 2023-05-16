@@ -10,14 +10,7 @@ import { iMiddleware, MiddlewareStack } from './compose/middleware'
 import { Bucket } from './compose/bucket'
 import { Emitter } from './compose/emitter'
 import { Pipeline } from './compose/pipeline'
-import {
-  Context,
-  ContextInit,
-  NetworkInit,
-  ProcessType,
-  RequestParams,
-  Wrong
-} from './context'
+import { Context, ContextInit, NetworkInit, RequestParams } from './context'
 import { AxiosResponse } from 'axios'
 
 export class WuhaoNetwork {
@@ -38,23 +31,19 @@ export class WuhaoNetwork {
   }
 
   async send(options: ContextInit) {
-    try {
-      const result = await this.pipe.exec(
-        this.processor.sources,
-        new Context(options),
-        {
-          pipe: this.pipe,
-          bucket: this.bucket,
-          emitter: this.emitter,
-          service: this.service,
-          processor: this.processor,
-          middleware: this.middleware
-        }
-      )
-      return result
-    } catch (e) {
-      return Promise.reject(e)
-    }
+    const result = await this.pipe.exec(
+      this.processor.sources,
+      new Context(options),
+      {
+        pipe: this.pipe,
+        bucket: this.bucket,
+        emitter: this.emitter,
+        service: this.service,
+        processor: this.processor,
+        middleware: this.middleware
+      }
+    )
+    return result
   }
 
   /**
@@ -143,25 +132,30 @@ export function createNetwork(props?: NetworkInit) {
 /**
  * 定义服务接口，返回调用函数
  * @param serviceDefine: iService | iArrayService
+ * @param register: Boolean 是否注册
  * @returns request(params: RequestParams)
  */
 export function useService(
-  serviceDefine: iService | iArrayService
+  serviceDefine: iService | iArrayService,
+  register?: boolean
 ): (params?: RequestParams) => Promise<AxiosResponse<any, any>> {
   const service: iService = transformService(serviceDefine)
   if (!service) return
-  if (WuhaoNetwork.simpleInstance) {
-    WuhaoNetwork.simpleInstance.service.register(service)
-  } else {
-    const services = Reflect.getMetadata(SERVICE_FLAG, ServiceStack) || []
 
-    if (
-      services.length === 0 ||
-      services.some((item: iService) => item.name !== service.name)
-    ) {
-      services.push(service)
+  if (register) {
+    if (WuhaoNetwork.simpleInstance) {
+      WuhaoNetwork.simpleInstance.service.register(service)
+    } else {
+      const services = Reflect.getMetadata(SERVICE_FLAG, ServiceStack) || []
+
+      if (
+        services.length === 0 ||
+        services.some((item: iService) => item.name !== service.name)
+      ) {
+        services.push(service)
+      }
+      Reflect.defineMetadata(SERVICE_FLAG, services, ServiceStack)
     }
-    Reflect.defineMetadata(SERVICE_FLAG, services, ServiceStack)
   }
 
   return function (params?: RequestParams) {
