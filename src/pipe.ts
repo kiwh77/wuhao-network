@@ -2,6 +2,7 @@ import 'reflect-metadata'
 import {
   iArrayService,
   iService,
+  PropType,
   ServiceStack,
   transformService
 } from './compose/service'
@@ -133,16 +134,24 @@ export function createNetwork(props?: NetworkInit) {
  * 定义服务接口，返回调用函数
  * @param serviceDefine: iService | iArrayService
  * @param register: Boolean 是否注册
+ * @param register: string 标注调用时参数为指定字段，如params,则所有参数放在params中
  * @returns request(params: RequestParams)
  */
-export function useService(
+export function useService<Req = any, Res = any>(
   serviceDefine: iService | iArrayService,
-  register?: boolean
-): (params?: RequestParams) => Promise<AxiosResponse<any, any>> {
+  register?: boolean | 'params' | 'data' | 'path'
+): (
+  params?:
+    | RequestParams
+    | PropType<RequestParams, 'params'>
+    | PropType<RequestParams, 'data'>
+    | PropType<RequestParams, 'path'>
+) => Promise<AxiosResponse<Res, Req>> {
   const service: iService = transformService(serviceDefine)
   if (!service) return
 
-  if (register) {
+  // 需要注册的name必传
+  if (typeof register === 'boolean' && register && service.name) {
     if (WuhaoNetwork.simpleInstance) {
       WuhaoNetwork.simpleInstance.service.register(service)
     } else {
@@ -158,10 +167,25 @@ export function useService(
     }
   }
 
-  return function (params?: RequestParams) {
+  return function (
+    params?:
+      | RequestParams
+      | PropType<RequestParams, 'params'>
+      | PropType<RequestParams, 'data'>
+      | PropType<RequestParams, 'path'>
+  ) {
+    let tParams: any = {}
+    if (
+      typeof register === 'string' &&
+      ['params', 'data', 'path'].indexOf(register) > -1
+    ) {
+      tParams[register] = params
+    } else {
+      tParams = params
+    }
     return WuhaoNetwork.simpleInstance.send({
       ...service,
-      ...(params || {})
+      ...tParams
     })
   }
 }

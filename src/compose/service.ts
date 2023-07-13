@@ -84,15 +84,27 @@ export interface iService extends iServiceBase {
 /**
  * 数组式申明
  */
-export type iArrayService = [
-  PropType<iService, 'name'>,
-  PropType<iService, 'method'>,
-  PropType<iService, 'url'>,
-  Omit<iService, 'name' | 'method' | 'url'>?
-]
+export type iArrayService =
+  | [PropType<iService, 'method'>, PropType<iService, 'url'>]
+  | [
+      PropType<iService, 'name'>,
+      PropType<iService, 'method'>,
+      PropType<iService, 'url'>
+    ]
+  | [
+      PropType<iService, 'method'>,
+      PropType<iService, 'url'>,
+      Omit<iService, 'method' | 'url'>
+    ]
+  | [
+      PropType<iService, 'name'>,
+      PropType<iService, 'method'>,
+      PropType<iService, 'url'>,
+      Omit<iService, 'name' | 'method' | 'url'>
+    ]
 
 export function isService(obj: any) {
-  return isObject(obj) && 'name' in obj && 'url' in obj && 'method' in obj
+  return isObject(obj) && 'url' in obj && 'method' in obj
 }
 
 export class ServiceStack implements Stack<iService> {
@@ -103,7 +115,7 @@ export class ServiceStack implements Stack<iService> {
       this.sources = props.services.reduce(
         (total: Array<iService>, item: iService | iArrayService) => {
           const service = transformService(item)
-          if (service) total.push(service)
+          if (service && service.name) total.push(service)
           return total
         },
         []
@@ -113,7 +125,7 @@ export class ServiceStack implements Stack<iService> {
 
   register(service: iService | iArrayService) {
     const s = transformService(service)
-    if (s) this.sources.push(s)
+    if (s && s.name) this.sources.push(s)
   }
 
   find(name: string) {
@@ -126,13 +138,36 @@ export function transformService(params: iService | iArrayService): iService {
   if (isService(params)) service = params as iService
 
   if (isArray(params)) {
+    const length = (params as any).length
+    // 未配置
+    if (length < 2) {
+      console.warn(params, ' not a complete service configuration item')
+      return
+    }
     const [name, method, url, advance] = params as iArrayService
-    if (!name || !method || !url) return
-
+    // 配置项为2，method，url
+    if (length === 2) {
+      return { method: name, url: method }
+    } else if (length === 3) {
+      // 无advance配置项，但url位置是对象，表示用户未配置名称
+      if (isObject(url)) {
+        return {
+          method: name,
+          url: method,
+          ...(url as Object)
+        }
+      } else {
+        return {
+          name,
+          method,
+          url: url as string
+        }
+      }
+    }
     service = {
       name,
       method,
-      url,
+      url: url as string,
       ...(isObject(advance) ? advance : {})
     }
   }

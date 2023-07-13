@@ -164,6 +164,15 @@ updateEntity({
 }).then(res => {
   // ...
 })
+
+// functional use
+export const insertEntity = useService(['post', '/api/insert/entity'], 'data')
+
+insertEntity({
+  name: 'NAME',
+  other: 'OTHER'
+})
+
 ```
 
 ## 核心概念

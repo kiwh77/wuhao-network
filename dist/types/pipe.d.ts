@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { iArrayService, iService, ServiceStack } from './compose/service';
+import { iArrayService, iService, PropType, ServiceStack } from './compose/service';
 import { ProcessorStack } from './compose/processor';
 import { iMiddleware, MiddlewareStack } from './compose/middleware';
 import { Bucket } from './compose/bucket';
@@ -53,9 +53,10 @@ export declare function createNetwork(props?: NetworkInit): WuhaoNetwork;
  * 定义服务接口，返回调用函数
  * @param serviceDefine: iService | iArrayService
  * @param register: Boolean 是否注册
+ * @param register: string 标注调用时参数为指定字段，如params,则所有参数放在params中
  * @returns request(params: RequestParams)
  */
-export declare function useService(serviceDefine: iService | iArrayService, register?: boolean): (params?: RequestParams) => Promise<AxiosResponse<any, any>>;
+export declare function useService<Req = any, Res = any>(serviceDefine: iService | iArrayService, register?: boolean | 'params' | 'data' | 'path'): (params?: RequestParams | PropType<RequestParams, 'params'> | PropType<RequestParams, 'data'> | PropType<RequestParams, 'path'>) => Promise<AxiosResponse<Res, Req>>;
 /**
  * 注册中间件
  * @param middleware 中间件参数

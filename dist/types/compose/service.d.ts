@@ -58,11 +58,19 @@ export interface iService extends iServiceBase {
 /**
  * 数组式申明
  */
-export type iArrayService = [
+export type iArrayService = [PropType<iService, 'method'>, PropType<iService, 'url'>] | [
+    PropType<iService, 'name'>,
+    PropType<iService, 'method'>,
+    PropType<iService, 'url'>
+] | [
+    PropType<iService, 'method'>,
+    PropType<iService, 'url'>,
+    Omit<iService, 'method' | 'url'>
+] | [
     PropType<iService, 'name'>,
     PropType<iService, 'method'>,
     PropType<iService, 'url'>,
-    Omit<iService, 'name' | 'method' | 'url'>?
+    Omit<iService, 'name' | 'method' | 'url'>
 ];
 export declare function isService(obj: any): boolean;
 export declare class ServiceStack implements Stack<iService> {
