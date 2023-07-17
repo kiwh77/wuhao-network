@@ -137,7 +137,7 @@ export function createNetwork(props?: NetworkInit) {
  * @param register: string 标注调用时参数为指定字段，如params,则所有参数放在params中
  * @returns request(params: RequestParams)
  */
-export function useService<Req = any, Res = any>(
+export function useService<Res = any, Req = any>(
   serviceDefine: iService | iArrayService,
   register?: boolean | 'params' | 'data' | 'path'
 ): (

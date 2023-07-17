@@ -56,7 +56,7 @@ export declare function createNetwork(props?: NetworkInit): WuhaoNetwork;
  * @param register: string 标注调用时参数为指定字段，如params,则所有参数放在params中
  * @returns request(params: RequestParams)
  */
-export declare function useService<Req = any, Res = any>(serviceDefine: iService | iArrayService, register?: boolean | 'params' | 'data' | 'path'): (params?: RequestParams | PropType<RequestParams, 'params'> | PropType<RequestParams, 'data'> | PropType<RequestParams, 'path'>) => Promise<AxiosResponse<Res, Req>>;
+export declare function useService<Res = any, Req = any>(serviceDefine: iService | iArrayService, register?: boolean | 'params' | 'data' | 'path'): (params?: RequestParams | PropType<RequestParams, 'params'> | PropType<RequestParams, 'data'> | PropType<RequestParams, 'path'>) => Promise<AxiosResponse<Res, Req>>;
 /**
  * 注册中间件
  * @param middleware 中间件参数
