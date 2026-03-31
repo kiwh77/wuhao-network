@@ -8,7 +8,9 @@
   "scripts": {
     "serve": "NODE_ENV=developer rollup -c -w",
     "build": "NODE_ENV=production rollup -c",
-    "test": "jest"
+    "test": "jest",
+    "test:unit": "jest src/pipe.test.ts src/pipe.behavior.test.ts",
+    "test:e2e": "jest src/pipe.e2e.test.ts"
   },
   "keywords": [
     "axios",

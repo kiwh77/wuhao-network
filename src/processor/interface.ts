@@ -7,7 +7,8 @@ export class BaseProcessor implements iProcessor {
   constructor() {
     const originHandle = this.handle
     this.handle = async function (ctx: Context, env: Env) {
-      const middlewares = ctx.service?.middleware || []
+      const middlewares =
+        ctx.service?.middlewares || ctx.service?.middleware || []
 
       const beforeName = 'before' + UpperFirstWord(this.name)
 

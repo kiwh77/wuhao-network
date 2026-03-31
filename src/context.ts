@@ -40,6 +40,7 @@ export type RequestParams = {
    */
   cancel?: Function
 
+  middlewares?: PropType<iService, 'middlewares'>
   middleware?: PropType<iService, 'middleware'>
   url?: PropType<iService, 'url'>
   method?: PropType<iService, 'method'>

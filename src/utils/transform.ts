@@ -10,11 +10,12 @@ export function transformPathParams(
   const urlComponents = url.split('/')
   return urlComponents
     .map((component: string) => {
-      if (
-        new RegExp('^:').test(component) &&
-        path[component.replace(':', '')]
-      ) {
-        return path[component.replace(':', '')]
+      const colonMatched = component.match(/^:(.+)$/)
+      const bracketMatched = component.match(/^\{(.+)\}$/)
+      const key = colonMatched?.[1] || bracketMatched?.[1]
+
+      if (key && path[key]) {
+        return path[key]
       }
       return component
     })

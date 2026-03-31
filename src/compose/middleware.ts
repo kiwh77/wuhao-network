@@ -10,6 +10,10 @@ export interface iMiddleware extends iHandler {
    * 是否全局中间件，注册为全局中间件会应用到所有服务
    */
   global?: boolean
+  /**
+   * @deprecated please use `global`
+   */
+  isGlobal?: boolean
 }
 
 export class BaseMiddleware implements iMiddleware {
@@ -23,14 +27,25 @@ export class MiddlewareStack implements Stack<iMiddleware> {
 
   constructor(props: NetworkInit) {
     if (props?.middlewares?.length > 0) {
-      this.sources = props.middlewares.filter(this.verify)
+      this.sources = props.middlewares
+        .map(middleware => this.normalize(middleware))
+        .filter(this.verify)
     }
   }
 
   register<T extends iMiddleware>(middleware: T) {
-    if (this.verify(middleware)) {
-      this.sources.push(middleware)
-      return middleware.name
+    const normalized = this.normalize(middleware)
+    if (this.verify(normalized)) {
+      this.sources.push(normalized)
+      return normalized.name
+    }
+  }
+
+  normalize<T extends iMiddleware>(mid: T): T {
+    if (!mid) return mid
+    return {
+      ...mid,
+      global: typeof mid.global === 'boolean' ? mid.global : mid.isGlobal
     }
   }
 

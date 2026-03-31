@@ -58,6 +58,5 @@ export class RequestProcessor extends BaseProcessor implements iProcessor {
 
     ctx.response = await this.axiosInstance.request(requestParams)
     ctx.response.success = true
-    env.bucket.pop(ctx.id)
   }
 }
