@@ -54,7 +54,7 @@ npm install wuhao-network -S
 
 ```ts
 // network.ts
-import { createNetwork } from 'wuhao-network'
+import { Before, ProcessType, createNetwork } from 'wuhao-network'
 import services from './services'
 import middlewares from './middlewares'
 
@@ -62,14 +62,14 @@ const network = createNetwork({
   services,
   middlewares: [...middlewares, {
     name: 'TEMP_MIDDLEWARE',
-    at: before(ProcessorType.request),
+    at: Before(ProcessType.request),
     handle (ctx, env) {
       // do some thing
     }
   }]
 })
 
-network.emit.on('')
+network.emitter.on('')
 
 export default network
 
@@ -103,11 +103,11 @@ export default [
 ]
 
 // middlewares.ts
-import { useMiddleware } from 'wuhao-network'
+import { After, Before, ProcessType, useMiddleware } from 'wuhao-network'
 
 export const Logger = useMiddleware({
   name: 'Logger',
-  at: after(ProcessorType.request),
+  at: After(ProcessType.request),
   handle(env, ctx) {
     console.log('request  ：', ctx.params)
     console.log('response ：', ctx.response)
@@ -117,8 +117,8 @@ export const Logger = useMiddleware({
 export default [
   {
     name: 'SetToken',
-    isGlobal: true,
-    at: before(ProcessorType.request),
+    global: true,
+    at: Before(ProcessType.request),
     handle(env, ctx) {
       if (!ctx.config) ctx.config = {}
       if (!ctx.config.headers) ctx.config.headers = {}
@@ -265,7 +265,7 @@ method: Method | string;
 /**
  * service tag
  */
-tag?: Array<string> | string;
+tags?: Array<string> | string;
 /**
  * Custom data, which follows the entire request flow, can be picked up in the middleware for personalized operation 
  */
@@ -290,7 +290,7 @@ default?: Pick<RequestParams, 'path'> & Pick<RequestParams, 'params'> & Pick<Req
 /**
  * middleware
  */
-middleware?: Array<iMiddleware | string>;
+middlewares?: Array<iMiddleware | string>;
 ```
 
 ### processor

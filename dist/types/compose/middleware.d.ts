@@ -8,6 +8,10 @@ export interface iMiddleware extends iHandler {
      * 是否全局中间件，注册为全局中间件会应用到所有服务
      */
     global?: boolean;
+    /**
+     * @deprecated please use `global`
+     */
+    isGlobal?: boolean;
 }
 export declare class BaseMiddleware implements iMiddleware {
     at: string;
@@ -18,6 +22,7 @@ export declare class MiddlewareStack implements Stack<iMiddleware> {
     sources: iMiddleware[];
     constructor(props: NetworkInit);
     register<T extends iMiddleware>(middleware: T): string;
+    normalize<T extends iMiddleware>(mid: T): T;
     verify(mid: iMiddleware): Boolean;
     find(name: string): iMiddleware;
     getGlobal(at: string): iMiddleware[];

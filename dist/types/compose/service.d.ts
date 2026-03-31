@@ -28,6 +28,10 @@ export interface iService extends iServiceBase {
     /**
      * 服务标签
      */
+    tags?: Array<string> | string;
+    /**
+     * @deprecated please use `tags`
+     */
     tag?: Array<string> | string;
     /**
      * 自定义数据，会跟随整个请求流程，可在中间件中拿到后进行个性化操作
@@ -52,6 +56,10 @@ export interface iService extends iServiceBase {
     };
     /**
      * 特性
+     */
+    middlewares?: Array<iMiddleware | string>;
+    /**
+     * @deprecated please use `middlewares`
      */
     middleware?: Array<iMiddleware | string>;
 }
